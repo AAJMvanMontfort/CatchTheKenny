@@ -53,7 +53,7 @@ class ViewController: UIViewController {
         lblHighScore.text = "Highscore: \(highScore)"
         
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(catchKenny), userInfo: nil, repeats: true)
-        switchKennyTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(showKenny), userInfo: nil, repeats: true)
+        switchKennyTimer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(showKenny), userInfo: nil, repeats: true)
     }
     
     func initKennys() {
@@ -84,9 +84,10 @@ class ViewController: UIViewController {
     func hideKennys() {
         for kenny in kennyArray {
             kenny.alpha = 0
+            kenny.isUserInteractionEnabled = false
         }
     }
-    
+        
     @objc func showKenny() {
         let maxKenny = kennyArray.count
         var random = Int(arc4random_uniform(UInt32(maxKenny)))
@@ -115,18 +116,18 @@ class ViewController: UIViewController {
             timer.invalidate()
             switchKennyTimer.invalidate()
             
+            hideKennys()
+            
             let alert = UIAlertController(title: "Time's up!", message: "Do you want to play again?", preferredStyle: UIAlertController.Style.alert)
-            let noButton = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel)
             let replayButton = UIAlertAction(title: "Replay", style: UIAlertAction.Style.default) {
                 (UIAlertAction) in
                 self.initGame()
             }
             
-            alert.addAction(noButton)
             alert.addAction(replayButton)
             self.present(alert, animated: true , completion: nil)
 
-            lblTimer.text = "Time's over!"
+            lblTimer.text = "Time's up!"
         }
     }
     
@@ -136,6 +137,7 @@ class ViewController: UIViewController {
         
         if score > highScore {
             UserDefaults.standard.set(score, forKey: "Highscore")
+            highScore = score
             lblHighScore.text = "Highscore: \(highScore)"
         }
     }
